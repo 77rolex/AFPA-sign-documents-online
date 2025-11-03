@@ -1,20 +1,56 @@
+# E:\WEB\dbConvention\dbConvention\.gitignore
 
-###> symfony/framework-bundle ###
+### Symfony ###
+/.env
 /.env.local
 /.env.local.php
 /.env.*.local
-/config/secrets/prod/prod.decrypt.private.php
+/config/secrets/*/*.decrypt.private.php
 /public/bundles/
 /var/
 /vendor/
-###< symfony/framework-bundle ###
+node_modules/
+*.log
+*.cache
+*.lock
+*.tmp
+*.bak
+.DS_Store
 
-###> phpunit/phpunit ###
+### PHPUnit ###
 /phpunit.xml
+/.phpunit.result.cache
 /.phpunit.cache/
-###< phpunit/phpunit ###
 
-###> symfony/asset-mapper ###
+### Asset Mapper / Webpack / Vite ###
 /public/assets/
 /assets/vendor/
-###< symfony/asset-mapper ###
+/assets/build/
+/assets/dist/
+/assets/node_modules/
+
+### IDEs and Editors ###
+# PhpStorm
+.idea/
+# VSCode
+.vscode/
+# Sublime
+*.sublime-project
+*.sublime-workspace
+
+### OS-specific ###
+# macOS
+.DS_Store
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+### Composer ###
+/composer.phar
+
+### Misc ###
+/coverage/
+/build/
+/tmp/
+/test-results/

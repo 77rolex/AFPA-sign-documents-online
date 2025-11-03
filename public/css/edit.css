@@ -1,0 +1,104 @@
+#mainEdit{
+    display: flex;
+    justify-content: center;
+    justify-self: center;
+    width: 100%;
+}
+
+#sectionContentEdit{
+    display: flex;
+    flex-direction: column;
+    justify-self: center;
+    width: 45%;
+    background-color: rgba(255, 255, 255, 0.9);
+    box-shadow: 
+        0 -12px 24px rgba(0, 0, 0, 0.1), 
+        0 12px 24px rgba(0, 0, 0, 0.1); 
+    border-radius: 10px;
+    border: #edf0e8 solid 1px;
+    margin-top: 5px;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+#sectionReturn{
+    display: block;
+    padding-top: 13px;
+    /* margin-right: 1%; */
+}
+
+#editFormContainer{
+    margin-top: -4px;
+    margin-bottom: -17px;
+}
+
+#btnsEdit{
+    margin-top: -5px;
+    margin-bottom: 9px;
+    display: flex;
+    justify-self: center;
+    align-items: center !important;
+    justify-content: center;
+}
+
+#returnEdit{
+    margin-bottom: 40px;
+}
+
+.form-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+    flex-wrap: wrap;
+}
+ 
+.form-row label {
+    min-width: 200px;
+    margin-right: 15px;
+    margin-bottom: 0;
+    font-weight: bold;
+}
+
+.form-row .form-control {
+    flex: 1;
+    min-width: 250px;
+}
+
+/* Для маленьких экранов */
+/* @media (max-width: 426px) {
+    #buttonsArea{
+                    display: flex;
+                    justify-content: center;
+                    margin-bottom: 5px;
+                } 
+} */
+@media (max-width: 768px) {
+    #sectionContentEdit{
+        width: 100%;
+        align-items: center;
+
+    }
+
+    #editFormContainer{
+        width: 85%;
+    }
+
+    #btnsEdit{
+        margin-top: -15px;
+        margin-bottom: -2px;
+    }
+
+    .form-row {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .form-row label {
+        margin-bottom: 5px;
+        min-width: auto;
+    }
+    
+    .form-row .form-control {
+        width: 100%;
+    }
+}

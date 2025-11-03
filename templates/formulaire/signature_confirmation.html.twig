@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Signature Confirmée - {{ formulaire.SocietyName }}</title>
+    <style>
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            max-width: 800px; 
+            margin: 50px auto; 
+            padding: 20px; 
+            text-align: center; 
+            background-color: #f8f9fa;
+            color: #333;
+        }
+        .confirmation-container {
+            background-color: white;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .success-icon {
+            color: #4CAF50;
+            font-size: 64px;
+            margin-bottom: 20px;
+        }
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+        .details {
+            text-align: left;
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 25px 0;
+        }
+        .details p {
+            margin: 10px 0;
+        }
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            margin: 10px;
+            background-color: #4CAF50;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            font-weight: bold;
+            transition: background-color 0.3s;
+            border: none;
+            cursor: pointer;
+        }
+        .btn:hover {
+            background-color: #45a049;
+            color: white;
+        }
+        .btn-pdf {
+            background-color: #e74c3c;
+        }
+        .btn-pdf:hover {
+            background-color: #c0392b;
+        }
+        .signature-preview {
+            margin: 20px auto;
+            max-width: 300px;
+            border: 1px dashed #ccc;
+            padding: 10px;
+        }
+        .signature-preview img {
+            max-width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div class="confirmation-container">
+        <div class="success-icon">✓</div>
+        <h1>Votre signature électronique a été validée et enregistrée.</h1>
+        
+        <div class="actions">
+            <a href="{{ path('app_formulaire_pdf', {'id': formulaire.id}) }}" target="_blank" class="btn btn-pdf">
+                📄 Voir le PDF Signé
+            </a>
+        </div>
+    </div>
+</body>
+</html>

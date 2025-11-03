@@ -1,0 +1,25 @@
+{% block stylesheets %}
+    <link href="{{ asset('css/navbar.css') }}" rel="stylesheet">
+{% endblock %}
+{% block header %}
+<header>
+    <nav class="navbar navbar-expand-lg border" id="navbar">
+        <div class="container-fluid">
+            <span class="navbar-brand">
+                {% if app.user %}
+                    <div class="mb-3">
+                        Bonjour {{ app.user.firstname }}! 
+                    </div>
+                {% endif %}
+            </span>
+            <div id="navButtons">
+                {# <a type="button" class="btnHome" href="{{ path('app_formulaire_index') }}" title="Page d'acceuil"><u><ion-icon name="list-outline"></ion-icon></u></a> #}
+                {{ include('components/home_button.html.twig') }}
+                {% if app.user %}
+                        <a type="button" class="btnLogout" href="{{ path('app_logout') }}" title="Se deconnecter"><ion-icon name="exit-outline"></ion-icon></a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+</header>    
+{% endblock %}

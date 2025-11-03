@@ -1,0 +1,77 @@
+#mainLogin{
+    display: flex;
+    justify-self: center;
+    width: 100%;
+}
+
+#divRow{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#divFormLogin{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#formLogin{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 80%;
+}
+
+.img{
+    display: flex;
+    justify-content: center;
+    background-color: rgba(255, 255, 255, 0.9);
+    border-radius: 10px;
+    padding-top: 20px;
+    padding-bottom: 10px;
+    padding-left: 0px;
+    padding-right: 0px;
+    margin-top: 12%;
+    margin-bottom: 20px;
+    box-shadow: 
+        0 12px 24px rgba(0, 0, 0, 0.3); 
+}
+
+#form{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+#inputEmail:focus{
+    outline: 3px solid #86bc25;
+    box-shadow: none;
+} 
+#inputPassword:focus{
+    outline: 3px solid #86bc25;
+    box-shadow: none;
+} 
+
+#btnLogin{
+    background-color: #86bc25;
+    border-color: #86bc25;
+}
+
+#btnRegistration{
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+#h3Login{
+    text-align: center;
+}
+
+#divCheckboxLogin{
+    display: flex;
+    align-items: baseline;
+    margin-top: 15px;
+}
+
+#_remember_me{
+    margin-right: 5px;
+}

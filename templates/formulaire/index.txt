@@ -1,0 +1,207 @@
+{# templates/formulaire/index.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block title %}Formulaire index{% endblock %}
+{% block stylesheets %}
+    <link href="{{ asset('css/index.css') }}" rel="stylesheet">
+{% endblock %}
+{% block body %}
+{% include 'navbar.html.twig' %}
+    <main id="mainContent">
+        <h1 style="text-align: center;">Les formulaires</h1>
+        {# Форма фильтрации и поиска #}
+        {% if 'ROLE_STAGIAIRE' not in app.user.roles %}
+            <div class="card mb-4" id="filter-card">
+                <div class="card-header">
+                    {# <h5 class="card-title mb-0">Filtres et recherche</h5> #}
+                    <p class="d-inline-flex gap-1">
+                    {# <button class="btn" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExample" aria-controls="collapseExample">
+                        Filtres et recherche
+                    </button> #}
+                    {# <button class="btn" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExample" 
+                            aria-expanded="{{ isFilterSubmitted ? 'true' : 'false' }}" 
+                            aria-controls="collapseExample"
+                            id="toggleFilterBtn">
+                        Filtres et recherche <span id="toggleIcon">{{ isFilterSubmitted ? '▲' : '▼' }}</span>
+                    </button> #}
+                    <button class="btn" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExample" 
+                            aria-expanded="{{ isFilterSubmitted ? 'true' : 'false' }}" 
+                            aria-controls="collapseExample"
+                            id="toggleFilterBtn">
+                        Filtres et recherche <span id="toggleIcon">{{ isFilterSubmitted ? '▲' : '▼' }}</span>
+                    </button>
+                    </p>
+                    <div class="collapse {% if isFilterSubmitted %}show{% endif %}" id="collapseExample">
+                        <div class="card card-body">
+                            <div class="card-body" id="filter-card-body">
+                                {{ form_start(filterForm, {'attr': {'class': 'row g-3', 'id': 'filter-form'}}) }}
+                                    <span class="col-md-2 d-flex align-items-center">
+                                        <span><strong>Stagiaire:</strong></span>
+                                        <span>
+                                            {{ form_widget(filterForm.studentName, {'attr': {'class': 'form-control'}}) }} 
+                                        </span>
+                                    </span>
+
+                                    <span class="col-md-2 d-flex align-items-center">
+                                        <span><strong>Date début:</strong></span>
+                                        <span>
+                                            {{ form_row(filterForm.startDateFrom) }}
+                                        </span>
+                                    </span>
+
+                                    <span class="col-md-2 d-flex align-items-center">
+                                        <span><strong>Date fin:</strong></span>
+                                        <span>
+                                            {{ form_row(filterForm.startDateTo) }}
+                                        </span>
+                                    </span>
+
+                                    <span class="col-md-2 d-flex align-items-center">
+                                        <span><strong>Trier par:</strong></span>
+                                        <span>
+                                            {{ form_row(filterForm.sortBy) }}
+                                        </span>
+                                    </span>
+                                    
+                                    <span class="col-md-2 d-flex align-items-center">
+                                        {{ form_row(filterForm.filter, {'attr': {'class': 'btn-primary'}}) }}
+                                        {{ form_row(filterForm.reset, {'attr': {'class': 'btnCleanAll'}}) }}
+                                        <a href="{{ path('app_formulaire_index') }}" class="btnCleanAll" id="cleanAll" title="Effacer tout">⌫</a>
+                                    </span>
+                                    <span class="alert-info col-md-2 d-flex align-items-center" id="result-count">
+                                        <strong>{{ formulaires.getTotalItemCount }} &#8203; </strong> resultats:
+                                    </span>
+                                {{ form_end(filterForm) }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+        {# Таблица с данными #}
+        <table class="table table-striped" id="table">
+            <thead class="table-dark">
+                <tr>
+                    <th>Id</th>
+                    <th>Stagiaire</th>
+                    <th>Qualité de stagiaire</th>
+                    <th>Date de début de stage</th>
+                    <th>Date de fin de stage</th>
+                    <th>Chef de section</th>
+                    <th>Formateur de stagiaire</th>
+                    <th>Progression</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for formulaire in formulaires %}
+                    <tr>
+                        <td>{{ formulaire.id }}</td>
+                        <td>{{ formulaire.getStudentFullName() }}</td>
+                        <td>{{ formulaire.Quality }}</td>
+                        <td>{{ formulaire.StartDate ? formulaire.StartDate|date('d-m-Y') : '' }}</td>
+                        <td>{{ formulaire.EndDate ? formulaire.EndDate|date('d-m-Y') : '' }}</td>
+                        <td>{{ formulaire.TrainingAdvisor }}</td>
+                        <td>{{ formulaire.TrainerOfIntern }}</td>
+                        <td>
+                            <div class="progress" style="height: 20px;" title="Progression des signatures">
+                                <div class="progress-bar 
+                                    {% if formulaire.getSigningProgress() == 100 %}bg-success
+                                    {% elseif formulaire.getSigningProgress() >= 50 %}bg-info
+                                    {# {% elseif formulaire.getSigningProgress() == 0 %}bg-danger #}
+                                    {% else %}bg-warning{% endif %}" 
+                                    role="progressbar" 
+                                    style="width: {{ formulaire.getSigningProgress() }}%;"
+                                    aria-valuenow="{{ formulaire.getSigningProgress() }}" 
+                                    aria-valuemin="0" 
+                                    aria-valuemax="100">
+                                    {{ formulaire.getSigningProgress() }}%
+                                </div>
+                            </div>
+                            {# Детальная информация при наведении (опционально) #}
+                            <small class="text-muted" style="font-size: 0.7rem;">
+                                {% set status = formulaire.getSigningStatus() %}
+                                Stag: {% if status.student %}✔️{% else %}❌{% endif %} |
+                                Ent: {% if status.society %}✔️{% else %}❌{% endif %}
+                                Cmd: {% if status.commandant %}✔️{% else %}❌{% endif %} |
+                                Dir: {% if status.director %}✔️{% else %}❌{% endif %} |
+                            </small>
+                        </td>
+                        <td>
+                            <div class="btnsArea" role="group">
+                                <a href="{{ path('app_formulaire_show', {'id': formulaire.id}) }}" class="btnLook" title="Voir">👁️</a>
+                                {% if 'ROLE_COMMANDANT' not in app.user.roles %}
+                                    <a href="{{ path('app_formulaire_edit', {'id': formulaire.id}) }}" class="updBtn" title="Modifier">🛠️</a>
+                                    {{ include('formulaire/_delete_form.html.twig') }}
+                                {% endif %}
+                                <a href="{{ path('app_formulaire_pdf', {'id': formulaire.id}) }}" class="btnPDF" target="_blank" title="Télécharger le PDF"><span style="font-size: 20px;">🚀</span></a>
+                            </div>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="14" class="text-center text-muted py-4">
+                            <i class="fas fa-inbox fa-3x mb-3"></i>
+                            <br>
+                            Aucun document trouvé
+                            {% if isFilterSubmitted %} {# Используем переменную из контроллера #}
+                                <a href="{{ path('app_formulaire_index') }}">Réinitialiser les filtres</a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {# Пагинация #}
+        <div class="navigation">
+            {{ knp_pagination_render(formulaires) }}
+        </div>
+        {% if not is_granted('ROLE_COMMANDANT') and not is_granted('ROLE_DIRECTOR') %}
+            <a href="{{ path('app_formulaire_new') }}" class="btn" id="createNew">
+                <i class="fas fa-plus"></i> Créer nouveau
+            </a>
+        {% endif %}
+    </main>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const toggleBtn = document.getElementById('toggleFilterBtn');
+    const collapseBlock = document.getElementById('collapseExample');
+    const icon = document.getElementById('toggleIcon');
+
+    // Явно инициализируем Bootstrap Collapse
+    const bsCollapse = new bootstrap.Collapse(collapseBlock, {
+        toggle: false
+    });
+
+    // Устанавливаем начальное состояние
+    if (collapseBlock.classList.contains('show')) {
+        bsCollapse.show();
+    } else {
+        bsCollapse.hide();
+    }
+
+    // Обновляем иконку
+    const updateIcon = () => {
+        if (collapseBlock.classList.contains('show')) {
+            icon.textContent = '▲';
+            toggleBtn.setAttribute('aria-expanded', 'true');
+        } else {
+            icon.textContent = '▼';
+            toggleBtn.setAttribute('aria-expanded', 'false');
+        }
+    };
+
+    // Обновляем иконку при загрузке
+    updateIcon();
+
+    // Слушаем события collapse
+    collapseBlock.addEventListener('shown.bs.collapse', updateIcon);
+    collapseBlock.addEventListener('hidden.bs.collapse', updateIcon);
+
+    // Добавляем обработчик для ручного переключения (на всякий случай)
+    toggleBtn.addEventListener('click', function() {
+        bsCollapse.toggle();
+    });
+});
+</script>
+{% endblock %}

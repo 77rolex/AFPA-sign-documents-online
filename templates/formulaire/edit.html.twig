@@ -1,0 +1,31 @@
+{# templates\formulaire\edit.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit Formulaire{% endblock %}
+{% block stylesheets %}
+    <link href="{{ asset('css/edit.css') }}" rel="stylesheet">
+{% endblock %}
+{% block body %}
+{% include 'navbar.html.twig' %}
+    <main id="mainEdit">
+        {{ include('components/back_button.html.twig') }}
+        <section id="sectionContentEdit" class="col-11">
+            <h2 style="text-align: center; margin-bottom: -10px;">Modifier la formulaire</h2>
+            <hr>
+            <div id="editFormContainer">
+                {% if 'ROLE_COMMANDANT' not in app.user.roles %}
+                    {{ include('formulaire/_form.html.twig') }}
+                {% else %}
+                <div class="alert alert-warning" role="alert">
+                    ⚠️ Vous n'avez pas les droits nécessaires pour modifier ce formulaire.
+                </div>
+                {% endif %}
+            </div>
+            <hr>
+            <div id="btnsEdit">
+                    {{ include('components/update_button.html.twig') }}
+                    {{ include('components/_delete_form.html.twig') }}
+            </div>
+        </section>
+    </main>
+{% endblock %}

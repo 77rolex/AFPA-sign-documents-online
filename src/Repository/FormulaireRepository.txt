@@ -1,0 +1,83 @@
+<?php
+// src\Repository\FormulaireRepository.php
+namespace App\Repository;
+
+use App\Entity\Formulaire;
+use App\Entity\User;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Persistence\ManagerRegistry;
+
+/**
+ * @extends ServiceEntityRepository<Formulaire>
+ */
+class FormulaireRepository extends ServiceEntityRepository
+{
+    public function __construct(ManagerRegistry $registry)
+    {
+        parent::__construct($registry, Formulaire::class);
+    }
+
+    public function findAllForUser(User $user): array
+    {
+        $qb = $this->createQueryBuilder('f');
+        
+        if (in_array('ROLE_STAGIAIRE', $user->getRoles())) {
+            // Стажер видит только свои формуляры
+            $qb->andWhere('f.student = :user')
+               ->setParameter('user', $user);
+        } elseif (in_array('ROLE_COMMANDANT', $user->getRoles())) {
+            // Капитан видит формуляры стажеров своей компании
+            $qb->join('f.student', 's')
+               ->andWhere('s.company = :company')
+               ->setParameter('company', $user->getCompany());
+        }
+        // Директор видит все формуляры (без дополнительных условий)
+        
+        return $qb->orderBy('f.id', 'DESC')
+                 ->getQuery()
+                 ->getResult();
+    }
+    
+    public function findForUser(int $id, User $user): ?Formulaire
+    {
+        $qb = $this->createQueryBuilder('f')
+            ->andWhere('f.id = :id')
+            ->setParameter('id', $id);
+        
+        if (in_array('ROLE_STAGIAIRE', $user->getRoles())) {
+            $qb->andWhere('f.student = :user')
+               ->setParameter('user', $user);
+        } elseif (in_array('ROLE_COMMANDANT', $user->getRoles())) {
+            $qb->join('f.student', 's')
+               ->andWhere('s.company = :company')
+               ->setParameter('company', $user->getCompany());
+        }
+        
+        return $qb->getQuery()
+                 ->getOneOrNullResult();
+    }
+    //    /**
+    //     * @return Formulaire[] Returns an array of Formulaire objects
+    //     */
+    //    public function findByExampleField($value): array
+    //    {
+    //        return $this->createQueryBuilder('f')
+    //            ->andWhere('f.exampleField = :val')
+    //            ->setParameter('val', $value)
+    //            ->orderBy('f.id', 'ASC')
+    //            ->setMaxResults(10)
+    //            ->getQuery()
+    //            ->getResult()
+    //        ;
+    //    }
+
+    //    public function findOneBySomeField($value): ?Formulaire
+    //    {
+    //        return $this->createQueryBuilder('f')
+    //            ->andWhere('f.exampleField = :val')
+    //            ->setParameter('val', $value)
+    //            ->getQuery()
+    //            ->getOneOrNullResult()
+    //        ;
+    //    }
+}

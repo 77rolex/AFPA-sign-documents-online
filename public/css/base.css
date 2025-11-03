@@ -1,0 +1,30 @@
+/* assets/styles/app.css */
+.pagination {
+    display: flex;
+    justify-content: center;
+    margin: 20px 0;
+}
+
+.pagination li {
+    margin: 0 5px;
+    list-style: none;
+    display: inline-block;
+}
+
+.pagination a {
+    padding: 8px 16px;
+    border: 1px solid #ddd;
+    text-decoration: none;
+    color: #007bff;
+    border-radius: 4px;
+}
+
+.pagination .active a {
+    background-color: #007bff;
+    color: white;
+    border-color: #007bff;
+}
+
+.pagination a:hover {
+    background-color: #f8f9fa;
+}

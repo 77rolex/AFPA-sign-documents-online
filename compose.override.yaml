@@ -1,18 +1,42 @@
+# E:\WEB\dbConvention\dbConvention\compose.override.yaml
+version: '3.8'
 
 services:
-###> doctrine/doctrine-bundle ###
-  database:
+  ###> ваш код приложения ###
+  app:
+    build: .
+    volumes:
+      - .:/var/www/html   # синхронизация локального проекта с контейнером
     ports:
-      - "5432"
-###< doctrine/doctrine-bundle ###
+      - "8080:80"         # проброс порта для веб-сервера
+    depends_on:
+      - database
+      - mailer
+  ###< ваш код приложения ###
 
-###> symfony/mailer ###
+  ###> doctrine/doctrine-bundle ###
+  database:
+    image: postgres:16-alpine
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: dbconvention
+    volumes:
+      - database_data:/var/lib/postgresql/data
+  ###< doctrine/doctrine-bundle ###
+
+  ###> symfony/mailer ###
   mailer:
     image: axllent/mailpit
     ports:
-      - "1025"
-      - "8025"
+      - "1025:1025"
+      - "8025:8025"
     environment:
       MP_SMTP_AUTH_ACCEPT_ANY: 1
       MP_SMTP_AUTH_ALLOW_INSECURE: 1
-###< symfony/mailer ###
+  ###< symfony/mailer ###
+
+volumes:
+  database_data:

@@ -1,0 +1,9 @@
+{# templates/components/pdf_button.html.twig #}
+{% if formulaire is defined %}
+    <button style="border:none; background-color:transparent;">
+        <a href="{{ path('app_formulaire_pdf', {'id': formulaire.id}) }}" class="btnPDF" target="_blank" title="Télécharger le PDF">
+            <ion-icon name="document-attach-outline"></ion-icon>
+        </a>
+    </button>
+{% endif %}
+

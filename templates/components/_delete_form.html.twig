@@ -1,0 +1,8 @@
+{# templates\formulaire\_delete_form.html.twig #}
+<form method="post" action="{{ path('app_formulaire_delete', {'id': formulaire.id}) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cet élément?');" id="deleteForm">
+    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ formulaire.id) }}">
+    <button class="deleteBtn" title="Supprimer">
+        <ion-icon name="trash-outline"></ion-icon>
+    </button>
+</form>
+

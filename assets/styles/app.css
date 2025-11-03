@@ -1,3 +1,380 @@
+/* assets\styles\app.css */
+
 body {
-    background-color: skyblue;
+  background-image: url('/images/body6.png');
+  background-size: cover;
+}
+
+.btnLook{
+          display: flex;
+          color: rgb(0, 0, 0);
+          border: 2px solid transparent;
+          border-radius: 40px;
+          text-align: center;
+          padding: 11px 11px 11px 11px;
+          font-size: 1.5em;
+          cursor: pointer;
+          transition: border 0.5s ease;
+        }
+        .btnLook:hover{
+          border: 2px solid black;
+          background-color: #96ebfc;
+        }
+        .btnPDF{
+          display: flex;
+          color: rgb(0, 0, 0);
+          border: 2px solid transparent;
+          border-radius: 100px;
+          text-align: center;
+          padding: 11px 11px 11px 11px;
+          font-size: 1.5em;
+          cursor: pointer;
+          transition: border 0.5s ease;
+        }
+        .btnPDF:hover{
+          border: 2px solid black;
+          background-color: #c0e779;
+        }
+        .updBtn{
+          display: flex;
+          color: rgb(0, 0, 0);
+          border: 2px solid transparent;
+          border-radius: 100px;
+          text-align: center;
+          padding: 11px 11px 11px 11px;
+          font-size: 1.5em;
+          cursor: pointer;
+          transition: border 0.5s ease;
+        }
+        .updBtn:hover{
+            border: 2px solid black;
+            background-color: #f7ff84;
+        }
+        .deleteBtn{
+          display: flex;
+          color: rgb(0, 0, 0);
+          border: 2px solid transparent;
+          background-color: transparent;
+          border-radius: 100px;
+          text-align: center;
+          padding: 11px 11px 11px 11px;
+          font-size: 1.5em;
+          cursor: pointer;
+          transition: border, background-color 0.5s ease;
+          margin-top: 1px;
+          margin-left: 6px;
+          margin-right: 6px;
+        }
+        .deleteBtn:hover{
+            border: 2px solid black;
+            background-color: rgb(255, 111, 111);
+        }
+
+.btnUpdateEdit{
+              display: flex;
+              color: rgb(0, 0, 0);
+              border: 2px solid transparent;
+              border-radius: 100px;
+              background-color: transparent;
+              text-align: center;
+              padding: 11px 11px 11px 11px;
+              font-size: 1.5em;
+              cursor: pointer;
+              transition: border, background-color 0.5s ease;
+              }
+              .btnUpdateEdit:hover{
+                border: 2px solid black;  
+                background-color: #f7ff84;
+              }
+
+.btnReset{
+            display: flex;
+            color: rgb(0, 0, 0);
+            border: 2px solid transparent;
+            border-radius: 100px;
+            background-color: transparent;
+            text-align: center;
+            padding: 8px 11px 2px 11px;
+            font-size: 1.5em;
+            cursor: pointer;
+            transition: border, background-color 0.5s ease;
+          }
+          .btnReset:hover{
+            border: 2px solid black;
+            background-color: rgb(255, 111, 111);
+          }
+          .btnResetA{
+            text-decoration: none;
+            color: rgb(0, 0, 0);
+          }
+
+          .btnFilter{
+            display: flex;
+            color: rgb(0, 0, 0);
+            border: 2px solid transparent;
+            border-radius: 100px;
+            background-color: transparent;
+            text-align: center;
+            padding: 13px 13px 13px 13px;
+            font-size: 1.5em;
+            cursor: pointer;
+            transition: border 0.5s ease;
+          }
+          .btnFilter:hover{
+            border: 2px solid black;
+            background-color: #f7ff84;;
+          }
+
+.activateSignature{
+            display: flex;
+            color: rgb(0, 0, 0);
+            border: 2px solid transparent;
+            background-color: transparent;
+            border-radius: 100px;
+            text-align: center;
+            padding: 11px 11px 11px 11px;
+            font-size: 1.4em;
+            cursor: pointer;
+            transition: border, background-color 0.5s ease;
+          }
+          .activateSignature:hover{
+            border: 2px solid black;
+            background-color: #c0e779;
+          }
+
+          .cleanSignature{
+            display: flex;
+            color: rgb(0, 0, 0);
+            border: 2px solid transparent;
+            background-color: #d4d2d2;
+            border-radius: 100px;
+            text-align: center;
+            padding: 11px 11px 11px 11px;
+            font-size: 1.4em;
+            cursor: pointer;
+            transition: border 0.5s ease;
+          }
+          .cleanSignature:hover{
+            border: 2px solid black;
+          }
+          .saveSignature{
+            display: flex;
+            color: rgb(0, 0, 0);
+            border: 2px solid transparent;
+            background-color: #c0e779;
+            border-radius: 100px;
+            text-align: center;
+            padding: 11px 11px 11px 11px;
+            font-size: 1.4em;
+            cursor: pointer;
+            transition: border 0.5s ease;
+            margin: 0 10px;
+          }
+          .saveSignature:hover{
+            border: 2px solid black;
+          }
+          .cancelSignature{
+            display: flex;
+            color: rgb(0, 0, 0);
+            border: 2px solid transparent;
+            background-color: rgb(255, 111, 111);
+            border-radius: 100px;
+            text-align: center;
+            padding: 11px 11px 11px 11px;
+            font-size: 1.4em;
+            cursor: pointer;
+            transition: border 0.5s ease;
+          }
+          .cancelSignature:hover{
+            border: 2px solid black;
+          }
+          
+          .btnCopy{
+            display: flex;
+            color: rgb(0, 0, 0);
+            background-color: transparent;
+            border: 2px solid transparent;
+            border-radius: 25px;
+            text-align: center;
+            padding: 6px 6px;
+            font-size: 2.2em;
+            cursor: pointer;
+            transition: border, background-color 0.5s ease;
+          }
+          .btnCopy:hover{
+              border: 2px solid black;
+              background-color: #d4d2d2;
+          }
+
+#btnAdd{
+          display: flex;
+          color: rgb(0, 0, 0);
+          border: 2px solid transparent;
+          border-radius: 100px;
+          background-color: transparent;
+          text-align: center;
+          padding: 11px 11px 11px 11px;
+          font-size: 1.5em;
+          cursor: pointer;
+          transition: border, background-color 0.5s ease;
+        }
+        #btnAdd:hover{
+          border: 2px solid black;  
+          background-color: #c0e779;
+        }
+
+        .btnCancel{
+          display: flex;
+          color: rgb(0, 0, 0);
+          border: 2px solid transparent;
+          background-color: transparent;
+          border-radius: 100px;
+          text-align: center;
+          padding: 8px 11px 2px 11px;
+          font-size: 1.5em;
+          cursor: pointer;
+          transition: border, background-color 0.5s ease;
+        }
+        .btnCancel:hover{
+          border: 2px solid black;
+          background-color: rgb(255, 111, 111);  
+        }
+        .backCanc{
+          text-decoration: none;
+          color: rgb(0, 0, 0);
+        }
+
+.btnBack {
+          position: fixed;
+          top: 40%;
+          left: 3%;
+          z-index: 9999;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background-color: transparent;
+          border: 2px solid transparent;
+          text-align: center;
+          font-size: 2em;
+          cursor: pointer;
+          transition: font-size 0.5s ease;
+          text-decoration: none;
+          color: rgb(0, 0, 0);
+        }
+        .btnBack:hover {
+          font-size: 2.2em;
+        }
+        @media (max-width: 426px) {
+                                    .btnBack {
+                                      position: fixed;
+                                      left: -5px;
+                                      transition: none;
+                                    }
+                                  }
+        @media (max-width: 1025px) {
+                                    .btnLook .btnPDF .btnPDF .updBtn .deleteBtn .btnUpdateEdit .btnReset .btnFilter .activateSignature .btnCopy .btnAdd .btnCancel{
+                                      padding: 15px;
+                                      font-size: 1.5em;
+                                      transition: none;
+                                      color: rgb(0, 0, 0);
+                                    }
+                                  }
+.password-toggle {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.toggle-password {
+  margin-left: 10px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.2em;
+}
+
+.convention-form {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+input[type="text"],
+input[type="date"],
+input[type="email"],
+input[type="tel"] {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.btn-generate {
+  background: #007bff;
+  color: white;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.btn-generate:hover {
+  background: #0056b3;
+}
+
+.loading {
+  display: none;
+  margin-left: 10px;
+}
+
+.internship-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 14px;
+}
+
+.internship-table th,
+.internship-table td {
+  border: 1px solid #ccc;
+  padding: 10px 12px;
+  text-align: center;
+}
+
+.internship-table th {
+  background-color: #f4f6f8;
+  color: #333;
+  font-weight: 600;
+}
+
+.internship-table tr:nth-child(even) {
+  background-color: #fafafa;
+}
+
+.progress-bar {
+  background-color: #e0e0e0;
+  border-radius: 5px;
+  overflow: hidden;
+  height: 20px;
+}
+
+.progress-fill {
+  background-color: #4caf50;
+  height: 100%;
+  text-align: center;
+  color: white;
+  font-size: 12px;
+  line-height: 20px;
 }

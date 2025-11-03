@@ -1,0 +1,93 @@
+/* public\css\new.css */
+#mainContentNew{
+    display: flex;
+    flex-direction: column;
+    justify-self: center;
+    align-items: center;
+    width: 40%;
+    background-color: rgba(255, 255, 255, 0.9);
+    box-shadow: 
+        0 -12px 24px rgba(0, 0, 0, 0.1), 
+        0 12px 24px rgba(0, 0, 0, 0.1); 
+    border-radius: 10px;
+    border: #edf0e8 solid 1px;
+    margin-top: 1%;
+    padding-left: 10px; 
+    padding-right: 10px;
+}
+
+#mainNew{
+    display: flex;
+    justify-content: center;
+}
+
+.divFormNew{
+    width: 85%;
+}
+
+#sectionReturn{
+    display: block;
+    padding-top: 13px;
+}
+
+#btnsNew{
+        margin-top: -5px;
+        display: flex;
+        justify-self: center;
+        align-items: center !important;
+        justify-content: center;
+        }
+
+#returnNew{
+    margin-bottom: 40px;
+}
+
+.form-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+    flex-wrap: wrap;
+}
+ 
+.form-row label {
+    min-width: 200px;
+    margin-right: 15px;
+    margin-bottom: 0;
+    font-weight: bold;
+}
+
+.form-row .form-control {
+    flex: 1;
+    min-width: 250px;
+}
+
+/* Для маленьких экранов */
+@media (max-width: 426px) {
+    #mainContentNew{
+         width: 100%;
+    }
+}
+@media (min-width: 426px) and (max-width: 1024px) {
+    #mainContentNew{
+         width: 70%;
+    }
+}
+@media (max-width: 768px) {
+    #mainContentNew{
+        align-items: center;
+    }
+
+    .form-row {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .form-row label {
+        margin-bottom: 5px;
+        min-width: auto;
+    }
+    
+    .form-row .form-control {
+        width: 100%;
+    }
+}

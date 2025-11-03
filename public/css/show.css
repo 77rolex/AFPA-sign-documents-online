@@ -1,0 +1,135 @@
+/* public\css\show.css */
+#sectionContentShow {
+    display: flex;
+    justify-self: center;
+    flex-direction: column;
+    width: 80%;
+    margin-top: 5px;
+    margin-bottom: 20px;
+    border: #edf0e8 solid 1px;
+    box-shadow: 
+        0 -12px 24px rgba(0, 0, 0, 0.1), 
+        0 12px 24px rgba(0, 0, 0, 0.1); 
+    border-radius: 8px;
+    padding-bottom: 10px;
+    padding-left: 10px;
+    padding-right: 10px;
+    background-color: rgba(255, 255, 255, 0.9);
+}
+
+#hrShow{
+    display: none;
+}
+
+#hrShow2{
+    border: none;
+    height: 1px;
+    background-color: #929191;
+}
+
+#mainShow{
+    display: flex;
+    justify-content: center;
+}
+
+#sectionReturn{
+    display: block;
+    padding-top: 13px;
+    margin-right: 2%;
+}
+
+#formulaireDetails {
+    display: flex;
+    justify-content: space-evenly;
+}
+
+#divSignature{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+#showTable{ 
+    width: 100%;
+}
+
+.tableSpace{
+    display: flex;
+    justify-content: space-between; 
+}
+
+.align-items-center {
+    justify-self: center;
+    align-items: center !important;
+    justify-content: space-evenly;
+}
+
+.signatureCenter{
+    display: flex;
+    justify-content: center;
+}
+
+#buttonsArea{
+    display: flex;
+    justify-content: center;
+    margin-bottom: 5px;
+}
+
+.areaBtnsSignature{
+    display:flex;
+    justify-content: center;
+}
+
+.signetureSociety{
+    display: none;
+}
+
+@media (max-width: 426px) {
+    #buttonsArea{
+                    display: flex;
+                    justify-content: center;
+                    margin-bottom: 5px;
+                } 
+}
+@media (max-width: 768px) {
+        #sectionContentShow{
+            width: 100%;
+        }
+
+        #showTable th {
+                            text-align: left;
+                        }
+                        #showTable td {
+                            text-align: right;
+                        }
+
+        #formulaireDetails{
+            display: flex;
+            flex-direction: column;
+        }
+        
+        #hrShow{
+            display: block;
+            margin-top: 10px;
+        }
+
+        #showTable th{
+                        display: inline-block;
+                        width: 50%;
+                        box-sizing: border-box;
+                    }
+                    #showTable td {
+                        display: contents;
+                        width: 50%;
+                        box-sizing: border-box;
+                        vertical-align: top;
+                    }
+
+        .tableSpace {
+            display: flex;
+            flex-wrap: wrap;
+            border-bottom: 1px solid #f3f0f0;
+        }
+
+        
+}

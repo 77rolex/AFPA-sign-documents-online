@@ -1,0 +1,306 @@
+<?php
+// src\Controller\FormulaireController.php
+namespace App\Controller;
+
+use App\Entity\Formulaire;
+use App\Form\FormulaireType;
+use App\Repository\FormulaireRepository;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Attribute\Route;
+use App\Repository\UserRepository;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use App\Service\PdfGeneratorService;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
+use Symfony\Component\String\Slugger\AsciiSlugger;
+use App\Service\TcpdfGeneratorService;
+use App\Repository\CompanyRepository;
+
+#[Route('/formulaire')]
+final class FormulaireController extends AbstractController
+{
+    #[Route(name: 'app_formulaire_index', methods: ['GET'])]
+    public function index(FormulaireRepository $formulaireRepository): Response
+    {
+        $user = $this->getUser();
+        if (!$user) {
+            return $this->redirectToRoute('app_login');
+        }
+
+        return $this->render('formulaire/index.html.twig', [
+        'formulaires' => $formulaireRepository->findAllForUser($user),
+        ]);
+    }
+
+    #[Route('/new', name: 'app_formulaire_new', methods: ['GET', 'POST'])]
+    public function new(Request $request, EntityManagerInterface $entityManager, UserRepository $userRepository): Response
+    {
+        $user = $this->getUser();
+        if (!$user || !in_array('ROLE_STAGIAIRE', $user->getRoles())) {
+            throw new AccessDeniedHttpException('Seuls les stagiaires peuvent créer des formulaires.');
+        }
+
+        // НАХОДИМ КОМАНДАНТА ИЗ ТОЙ ЖЕ КОМПАНИИ, ЧТО И СТАЖЕР
+        $commandant = $userRepository->findOneByRoleAndCompany('ROLE_COMMANDANT', $user->getCompany());
+
+        // Если не нашли commandant'a в компании, ищем любого
+        if (!$commandant) {
+            $commandant = $userRepository->findOneByRole('ROLE_COMMANDANT');
+        }
+
+        $director = $userRepository->findOneByRole('ROLE_DIRECTOR');
+
+        $formulaire = new Formulaire();
+        $formulaire->setStudent($user);
+        $formulaire->setCommandant($commandant);
+        $formulaire->setDirector($director);
+
+        $form = $this->createForm(FormulaireType::class, $formulaire);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            // Генерируем токен один раз
+            $slugger = new AsciiSlugger();
+            $token = $slugger->slug($formulaire->getSocietyName())->lower() . '-' . bin2hex(random_bytes(12));
+            $formulaire->setSocietySignToken($token);
+
+            $entityManager->persist($formulaire);
+            $entityManager->flush(); // Сохраняем один раз
+
+            return $this->redirectToRoute('app_formulaire_index', [], Response::HTTP_SEE_OTHER);
+        }
+
+        return $this->render('formulaire/new.html.twig', [
+            'formulaire' => $formulaire,
+            'form' => $form,
+        ]);
+    }
+
+    #[Route('/{id}', name: 'app_formulaire_show', methods: ['GET'])]
+    public function show(int $id, FormulaireRepository $formulaireRepository): Response
+    {
+        $user = $this->getUser();
+        if (!$user) {
+            return $this->redirectToRoute('app_login');
+        }
+        
+        $formulaire = $formulaireRepository->findForUser($id, $user);
+        if (!$formulaire) {
+            throw $this->createNotFoundException('Formulaire non trouvé ou accès non autorisé.');
+        }
+
+        return $this->render('formulaire/show.html.twig', [
+            'formulaire' => $formulaire,
+        ]);
+    }
+
+    #[Route('/{id}/edit', name: 'app_formulaire_edit', methods: ['GET', 'POST'])]
+    public function edit(Request $request, int $id, FormulaireRepository $formulaireRepository, EntityManagerInterface $entityManager): Response
+    {
+        $user = $this->getUser();
+        if (!$user) {
+            return $this->redirectToRoute('app_login');
+        }
+
+        $formulaire = $formulaireRepository->findForUser($id, $user);
+        if (!$formulaire) {
+            throw $this->createNotFoundException('Formulaire non trouvé ou accès non autorisé.');
+        }
+
+        // Стажеры могут редактировать только свои формуляры
+        if (in_array('ROLE_STAGIAIRE', $user->getRoles()) && $formulaire->getStudent() !== $user) {
+            throw new AccessDeniedHttpException('Vous ne pouvez modifier que vos propres formulaires.');
+        }
+
+        $form = $this->createForm(FormulaireType::class, $formulaire);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $entityManager->flush();
+
+            return $this->redirectToRoute('app_formulaire_index', [], Response::HTTP_SEE_OTHER);
+        }
+
+        return $this->render('formulaire/edit.html.twig', [
+            'formulaire' => $formulaire,
+            'form' => $form,
+        ]);
+    }
+
+    #[Route('/formulaire/{id}/sign', name: 'formulaire_sign', methods: ['POST'])]
+    public function sign(Request $request, Formulaire $formulaire, EntityManagerInterface $em): Response
+    {
+        $role = $request->request->get('role');
+        $signature = $request->request->get('signature');
+
+        error_log("Trying to save signature for role: " . $role);
+        error_log("Signature data length: " . ($signature ? strlen($signature) : 0));
+        error_log("User: " . ($this->getUser() ? $this->getUser()->getEmail() : 'anonymous'));
+
+        // ВАЖНО: Добавить проверку прав пользователя!
+        $user = $this->getUser();
+        if (!$user) {
+            return new Response('Non autorisé', 403);
+        }
+
+        // Проверяем, имеет ли пользователь право подписывать за эту роль
+        $hasAccess = false;
+        switch ($role) {
+            case 'student':
+                $hasAccess = ($user === $formulaire->getStudent() && in_array('ROLE_STAGIAIRE', $user->getRoles()));
+                break;
+            case 'commandant':
+                $hasAccess = ($user === $formulaire->getCommandant() && in_array('ROLE_COMMANDANT', $user->getRoles()));
+                break;
+            case 'director':
+                $hasAccess = ($user === $formulaire->getDirector() && in_array('ROLE_DIRECTOR', $user->getRoles()));
+                break;
+            case 'society':
+                $hasAccess = in_array('ROLE_SOCIETY', $user->getRoles());
+                break;
+        }
+
+        if (!$hasAccess) {
+            return new Response('Accès non autorisé pour ce rôle', 403);
+        }
+
+        // Сохраняем подпись
+        switch ($role) {
+            case 'student':
+                $formulaire->setStudentSignature($signature);
+                break;
+            case 'commandant':
+                $formulaire->setCommandantSignature($signature);
+                break;
+            case 'director':
+                $formulaire->setDirectorSignature($signature);
+                break;
+            case 'society':
+                $formulaire->setSocietySignature($signature);
+                break;
+            default:
+                return new Response('Rôle invalide', 400);
+        }
+
+        $em->flush();
+
+        return new Response('Signature enregistrée', 200);
+    }
+
+    #[Route('/{id}', name: 'app_formulaire_delete', methods: ['POST'])]
+    public function delete(Request $request, int $id, FormulaireRepository $formulaireRepository, EntityManagerInterface $entityManager): Response
+    {
+        $user = $this->getUser();
+        if (!$user) {
+            return $this->redirectToRoute('app_login');
+        }
+
+        $formulaire = $formulaireRepository->findForUser($id, $user);
+        if (!$formulaire) {
+            throw $this->createNotFoundException('Formulaire non trouvé ou accès non autorisé.');
+        }
+
+        // Стажеры могут удалять только свои формуляры
+        if (in_array('ROLE_STAGIAIRE', $user->getRoles()) && $formulaire->getStudent() !== $user) {
+            throw new AccessDeniedHttpException('Vous ne pouvez supprimer que vos propres formulaires.');
+        }
+
+        if ($this->isCsrfTokenValid('delete'.$formulaire->getId(), $request->getPayload()->getString('_token'))) {
+            $entityManager->remove($formulaire);
+            $entityManager->flush();
+        }
+
+        return $this->redirectToRoute('app_formulaire_index', [], Response::HTTP_SEE_OTHER);
+    }
+
+    #[Route('/{id}/pdf', name: 'app_formulaire_pdf', methods: ['GET'])]
+    public function generatePdf(int $id, FormulaireRepository $formulaireRepository, TcpdfGeneratorService $pdfGenerator, CompanyRepository $companyRepository): Response
+    {
+        $user = $this->getUser();
+        if (!$user) {
+            return $this->redirectToRoute('app_login');
+        }
+        
+        $formulaire = $formulaireRepository->findForUser($id, $user);
+        if (!$formulaire) {
+            throw $this->createNotFoundException('Formulaire non trouvé ou accès non autorisé.');
+        }
+        $company = $companyRepository->findOneBy([]);
+        $companyName = $company ? $company->getName() : 'CMFP'; // Значение по умолчанию
+
+        try {
+            $pdfContent = $pdfGenerator->generateFormulairePdf($formulaire, $companyName);
+            
+            $response = new Response($pdfContent);
+            $response->headers->set('Content-Type', 'application/pdf');
+            $filename = sprintf('convention-stage-%d-%s.pdf', $formulaire->getId(), date('Y-m-d'));
+            $response->headers->set('Content-Disposition', 'inline; filename="' . $filename . '"');
+            
+            return $response;
+        } catch (\Exception $e) {
+            throw new \Exception('Erreur lors de la génération du PDF: ' . $e->getMessage());
+        }
+    }
+
+    #[Route('/sign/society/{token}', name: 'app_formulaire_society_sign', methods: ['GET', 'POST'])]
+    public function societySign(Request $request, string $token, FormulaireRepository $formulaireRepository, EntityManagerInterface $em): Response
+    {
+        // Находим формуляр по токену
+        $formulaire = $formulaireRepository->findOneBy(['societySignToken' => $token]);
+
+        if (!$formulaire) {
+            throw $this->createNotFoundException('Lien de signature invalide ou expiré.');
+        }
+
+        // Если это POST запрос (отправлена подпись)
+        if ($request->isMethod('POST')) {
+            $signature = $request->request->get('signature');
+            
+            // Проверяем, есть ли подпись
+            if (empty($signature)) {
+                $this->addFlash('error', 'Veuillez apposer votre signature avant de valider.');
+                return $this->render('formulaire/society_sign.html.twig', [
+                    'formulaire' => $formulaire,
+                    'token' => $token
+                ]);
+            }
+            
+            $formulaire->setSocietySignature($signature);
+            $em->flush();
+
+            // Перенаправляем на страницу подтверждения
+            return $this->redirectToRoute('app_formulaire_signature_confirmation', [
+                'id' => $formulaire->getId(),
+                'token' => $token
+            ]);
+        }
+
+        // Рендерим страницу с canvas для подписи
+        return $this->render('formulaire/society_sign.html.twig', [
+            'formulaire' => $formulaire,
+            'token' => $token
+        ]);
+    }
+
+    // Добавляем новый метод для страницы подтверждения
+    #[Route('/sign/confirmation/{id}/{token}', name: 'app_formulaire_signature_confirmation', methods: ['GET'])]
+    public function signatureConfirmation(int $id, string $token, FormulaireRepository $formulaireRepository): Response
+    {
+        $formulaire = $formulaireRepository->findOneBy([
+            'id' => $id,
+            'societySignToken' => $token
+        ]);
+
+        if (!$formulaire) {
+            throw $this->createNotFoundException('Formulaire non trouvé ou accès non autorisé.');
+        }
+
+        return $this->render('formulaire/signature_confirmation.html.twig', [
+            'formulaire' => $formulaire,
+            'signature' => $formulaire->getSocietySignature()
+        ]);
+    }
+    
+}

@@ -1,0 +1,33 @@
+//  assets/controllers/signature_controller.js 
+
+import { Controller } from "@hotwired/stimulus";
+
+export default class extends Controller {
+  static targets = ["canvas"];
+  connect() {
+    this.canvas = this.canvasTarget;
+    this.ctx = this.canvas.getContext("2d");
+    this.drawing = false;
+
+    this.canvas.addEventListener("mousedown", this.startDrawing.bind(this));
+    this.canvas.addEventListener("mousemove", this.draw.bind(this));
+    this.canvas.addEventListener("mouseup", this.stopDrawing.bind(this));
+    this.canvas.addEventListener("mouseleave", this.stopDrawing.bind(this));
+  }
+
+  startDrawing(event) {
+    this.drawing = true;
+    this.ctx.beginPath();
+    this.ctx.moveTo(event.offsetX, event.offsetY);
+  }
+
+  draw(event) {
+    if (!this.drawing) return;
+    this.ctx.lineTo(event.offsetX, event.offsetY);
+    this.ctx.stroke();
+  }
+
+  stopDrawing() {
+    this.drawing = false;
+  }
+}

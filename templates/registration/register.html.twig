@@ -1,0 +1,77 @@
+{# templates/registration/register.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block title %}S'enregistrer{% endblock %}
+{% block stylesheets %}
+    <link href="{{ asset('css/register.css') }}" rel="stylesheet">
+{% endblock %}
+{% block body %}
+<body id="bodyRegister">
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-12 col-md-7 col-xl-5">
+                <div class="register-form">
+                    {% for label, messages in app.flashes %}
+                        {% for message in messages %}
+                            <div class="alert alert-{{ label }}">
+                                {{ message }} 
+                            </div>
+                        {% endfor %}
+                    {% endfor %}
+                    <h2 class="mb-4 text-center">Créer un compte</h2>
+                    {{ form_start(registrationForm, {'attr': {'class': 'needs-validation'}}) }}
+                        <div class="mb-3">
+                            {{ form_label(registrationForm.firstname, null, {'label_attr': {'class': 'form-label'}}) }}
+                            {{ form_widget(registrationForm.firstname, {'attr': {'class': 'form-control'}}) }}
+                            {{ form_errors(registrationForm.firstname) }}
+                        </div>
+                        <div class="mb-3">
+                            {{ form_label(registrationForm.lastname, null, {'label_attr': {'class': 'form-label'}}) }}
+                            {{ form_widget(registrationForm.lastname, {'attr': {'class': 'form-control'}}) }}
+                            {{ form_errors(registrationForm.lastname) }}
+                        </div>
+                        <div class="mb-3">
+                            {{ form_label(registrationForm.company, null, {'label_attr': {'class': 'form-label'}}) }}
+                            {{ form_widget(registrationForm.company, {'attr': {'class': 'form-control'}}) }}
+                            {{ form_errors(registrationForm.company) }}
+                        </div>
+                        <div class="mb-3">
+                            {{ form_label(registrationForm.email, null, {'label_attr': {'class': 'form-label'}}) }}
+                            {{ form_widget(registrationForm.email, {'attr': {'class': 'form-control'}}) }}
+                            {{ form_errors(registrationForm.email) }}
+                        </div>
+                        <div class="container">
+                            <div class="row justify-content-center">
+                                <div class="col-12 col-md-6 col-xl-6">
+                                    {{ form_label(registrationForm.plainPassword.first, 'Creez votre mot de passe:', {'label_attr': {'class': 'form-label'}}) }}
+                                    {{ form_errors(registrationForm.plainPassword.first) }}
+                                </div>
+                                <div class="col-12 col-md-6 col-xl-6 password-toggle">
+                                    {{ form_widget(registrationForm.plainPassword.second, {'attr': {'class': 'form-control'}}) }}
+                                    <button type="button" class="toggle-password"><ion-icon name="eye-outline"></ion-icon></button>
+                                </div>
+                            </div>
+                            <div class="row justify-content-center">
+                                <div class="col-12 col-md-6 col-xl-6">
+                                    {{ form_label(registrationForm.plainPassword.second, 'Repetez votre mot de passe:', {'label_attr': {'class': 'form-label'}}) }}
+                                    {{ form_errors(registrationForm.plainPassword.second) }}
+                                </div>
+                                <div class="col-12 col-md-6 col-xl-6 password-toggle">
+                                    {{ form_widget(registrationForm.plainPassword.first, {'attr': {'class': 'form-control'}}) }}
+                                    <button type="button" class="toggle-password"><ion-icon name="eye-outline"></ion-icon></button>
+                                </div>
+                            </div>
+                        </div>
+                        <button class="btn btn-lg w-100 btnCreateAccount mt-3" type="submit" id="liveToastBtn">
+                            Créer un compte
+                        </button>
+                    {{ form_end(registrationForm) }}
+                    <div id="btnReturnLogin" class="text-center mt-3 mb-3">
+                        <a href="{{ path('app_login') }}">Retour vers la page de connection</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+{% endblock %}

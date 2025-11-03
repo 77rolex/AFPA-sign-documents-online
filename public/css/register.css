@@ -1,0 +1,37 @@
+.register-form {
+    /* width: 50%; */
+    background-color: rgba(255, 255, 255, 0.9);
+    border-radius: 10px;
+    padding-top: 20px;
+    padding-bottom: 10px;
+    padding-left: 30px;
+    padding-right: 30px;
+    margin-top: 10%;
+    margin-bottom: 20px;
+    /* height: 100%; */
+    box-shadow: 
+        0 12px 24px rgba(0, 0, 0, 0.3); 
+}
+
+.btnCreateAccount{
+    background-color: #86bc25;
+    border-color: #86bc25;
+    color: white;
+}
+
+#registration_form_firstname:focus{
+    outline: 3px solid #86bc25;
+    box-shadow: none;
+}
+#registration_form_lastname:focus{
+    outline: 3px solid #86bc25;
+    box-shadow: none;
+}
+.form-control:focus{
+    outline: 3px solid #86bc25;
+    box-shadow: none;
+}
+
+#passwordFields{
+    display: flex;
+}

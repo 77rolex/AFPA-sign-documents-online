@@ -1,0 +1,16 @@
+knp_snappy:
+    pdf:
+        enabled:    true
+        binary:     '"E:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe"' # Правильный путь для Windows
+        options:
+            encoding: 'utf-8'
+            margin-top: 0
+            margin-right: 0
+            margin-bottom: 0
+            margin-left: 0
+            page-size: A4
+            enable-local-file-access: true  # Важно для загрузки локальных изображений/CSS
+    image:
+        enabled:    true
+        binary:     '"E:\Program Files\wkhtmltopdf\bin\wkhtmltoimage.exe"' # Правильный путь для Windows
+        options:    []

@@ -1,0 +1,543 @@
+{# templates\formulaire\show.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block title %}Formulaire{% endblock %}
+{% block stylesheets %}
+    <link href="{{ asset('css/show.css') }}" rel="stylesheet">
+{% endblock %}
+{% block body %}
+{% include 'navbar.html.twig' %}
+    <main id="mainShow">
+        {{ include('components/back_button.html.twig') }}
+        <section id="sectionContentShow" class="col-11">
+            <h2 style="text-align: center; margin-bottom: -10px;">Formulaire</h2>
+            <hr>
+            <section  class="container text-center">
+                <div class="row" id="formulaireDetails">
+                    <div class="col-12 col-md-12 col-xl-4">
+                        <table id="showTable">
+                            <tbody>
+                                <tr class="tableSpace">
+                                    <th class="startHeader">Id:</th>
+                                    <td>{{ formulaire.id }}</td>
+                                </tr>
+                                <tr class="tableSpace">
+                                    <th class="startHeader">Stagiaire:</th>
+                                    <td>{{ formulaire.getStudentFullName() }}</td>
+                                </tr>
+                                <tr class="tableSpace">
+                                    <th class="startHeader">Nom de la société:</th>
+                                    <td>{{ formulaire.SocietyName }}</td>
+                                </tr>
+                                <tr class="tableSpace">
+                                    <th class="startHeader">Adresse de la société:</th>
+                                    <td>{{ formulaire.SocietyAdress }}</td>
+                                </tr>
+                                <tr class="tableSpace">
+                                    <th class="startHeader">SIRET/SIREN:</th>
+                                    <td>{{ formulaire.SIRETSIREN }}</td>
+                                </tr>
+                                <tr class="tableSpace">
+                                    <th class="startHeader">Qualité de stagiaire:</th>
+                                    <td>{{ formulaire.Quality }}</td>
+                                </tr>
+                                <tr class="tableSpace">
+                                    <th class="startHeader">Nom du tuteur de stage:</th>
+                                    <td>{{ formulaire.GuardianName }}</td>
+                                </tr>
+                                <tr class="tableSpace">
+                                    <th class="startHeader">Email du tuteur de stage:</th>
+                                    <td>{{ formulaire.GuardianEmail }}</td>
+                                </tr>
+                                <tr class="tableSpace">
+                                    <th class="startHeader">Téléphone du tuteur de stage:</th>
+                                    <td>{{ formulaire.GuardianPhone }}</td>
+                                </tr>
+                                <tr class="tableSpace">
+                                    <th class="startHeader">Date de début de stage:</th>
+                                    <td>{{ formulaire.StartDate ? formulaire.StartDate|date('d-m-Y') : '' }}</td>
+                                </tr>
+                                <tr class="tableSpace">
+                                    <th class="startHeader">Date de fin de stage:</th>
+                                    <td>{{ formulaire.EndDate ? formulaire.EndDate|date('d-m-Y') : '' }}</td>
+                                </tr>
+                                <tr class="tableSpace">
+                                    <th class="startHeader">Conseiller en formation:</th>
+                                    <td>{{ formulaire.TrainingAdvisor }}</td>
+                                </tr>
+                                <tr class="tableSpace">
+                                    <th class="startHeader">Formateur de stagiaire:</th>
+                                    <td>{{ formulaire.TrainerOfIntern }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <hr id="hrShow">
+                    <div class="col-12 col-md-12 col-xl-4" id="divSignature">
+                        {# stagiaire #}
+                        {% if app.user == formulaire.student and 'ROLE_STAGIAIRE' in app.user.roles %}
+                            <div class="signature-section">
+                                <h3>Signature de stagiaire:</h3>
+                                {% if formulaire.studentSignature %}
+                                    <p>Signature déjà enregistrée ✔️</p>
+                                {% else %}
+                                    <div class="signatureCenter">
+                                        <button id="activateStudentSignature" class="btn activateSignature" onclick="activateSignature('student')" title="Activer la signature">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-vector-pen" viewBox="0 0 16 16">
+                                                <path fill-rule="evenodd" d="M10.646.646a.5.5 0 0 1 .708 0l4 4a.5.5 0 0 1 0 .708l-1.902 1.902-.829 3.313a1.5 1.5 0 0 1-1.024 1.073L1.254 14.746 4.358 4.4A1.5 1.5 0 0 1 5.43 3.377l3.313-.828zm-1.8 2.908-3.173.793a.5.5 0 0 0-.358.342l-2.57 8.565 8.567-2.57a.5.5 0 0 0 .34-.357l.794-3.174-3.6-3.6z"/>
+                                                <path fill-rule="evenodd" d="M2.832 13.228 8 9a1 1 0 1 0-1-1l-4.228 5.168-.026.086z"/>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                    <div id="studentSignatureArea" style="display: none; margin-top: 20px;">
+                                        <p>Veuillez signer dans le cadre ci-dessous :</p>
+                                        <canvas id="studentCanvas" width="275%" height="200%" style="border:1px solid #000; background: white;"></canvas>
+                                        <div style="margin-top: 10px;" class="areaBtnsSignature">
+                                            <button onclick="clearSignature('student')" class="cleanSignature" title="Effacer"><ion-icon name="refresh-outline"></ion-icon></button>
+                                            <button onclick="submitSignature('student')" class="saveSignature" title="Enregistrer la signature"><ion-icon name="checkmark-done-outline"></ion-icon></button>
+                                            <button onclick="deactivateSignature('student')" class="cancelSignature" title="Annuler"><ion-icon name="stop-outline"></ion-icon></button>
+                                        </div>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        {% endif %}
+
+
+                        {# commandant #}
+                        {% if app.user == formulaire.commandant and 'ROLE_COMMANDANT' in app.user.roles %}
+                            <div class="signature-section">
+                                <h3>Signature du commandant:</h3>
+                                {% if formulaire.commandantSignature %}
+                                    <p>Signature déjà enregistrée ✔️</p>
+                                {% else %}
+                                    <div class="signatureCenter">
+                                        <button id="activateCommandantSignature" class="btn activateSignature" onclick="activateSignature('commandant')" title="Activer la signature">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-vector-pen" viewBox="0 0 16 16">
+                                                <path fill-rule="evenodd" d="M10.646.646a.5.5 0 0 1 .708 0l4 4a.5.5 0 0 1 0 .708l-1.902 1.902-.829 3.313a1.5 1.5 0 0 1-1.024 1.073L1.254 14.746 4.358 4.4A1.5 1.5 0 0 1 5.43 3.377l3.313-.828zm-1.8 2.908-3.173.793a.5.5 0 0 0-.358.342l-2.57 8.565 8.567-2.57a.5.5 0 0 0 .34-.357l.794-3.174-3.6-3.6z"/>
+                                                <path fill-rule="evenodd" d="M2.832 13.228 8 9a1 1 0 1 0-1-1l-4.228 5.168-.026.086z"/>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                    <div id="commandantSignatureArea" style="display: none; margin-top: 20px;">
+                                        <p>Veuillez signer dans le cadre ci-dessous :</p>
+                                        <canvas id="commandantCanvas" width="275%" height="200%" style="border:1px solid #000; background: white;"></canvas>
+                                        <div style="margin-top: 10px;" class="areaBtnsSignature">
+                                            <button onclick="clearSignature('commandant')" class="cleanSignature" title="Effacer"><ion-icon name="refresh-outline"></ion-icon></button>
+                                            <button onclick="submitSignature('commandant')" class="saveSignature" title="Enregistrer la signature"><ion-icon name="checkmark-done-outline"></ion-icon></button>
+                                            <button onclick="deactivateSignature('commandant')" class="cancelSignature" title="Annuler"><ion-icon name="stop-outline"></ion-icon></button>
+                                        </div>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        {% endif %}
+
+                        {# directeur #}
+                        {% if app.user == formulaire.director and 'ROLE_DIRECTOR' in app.user.roles %}
+                            <div class="signature-section">
+                                <h3>Signature du directeur:</h3>
+                                {% if formulaire.directorSignature %}
+                                    <p>Signature déjà enregistrée ✔️</p>
+                                {% else %}
+                                    <div class="signatureCenter">
+                                        <button id="activateDirectorSignature" class="btn activateSignature" onclick="activateSignature('director')" title="Activer la signature">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-vector-pen" viewBox="0 0 16 16">
+                                                <path fill-rule="evenodd" d="M10.646.646a.5.5 0 0 1 .708 0l4 4a.5.5 0 0 1 0 .708l-1.902 1.902-.829 3.313a1.5 1.5 0 0 1-1.024 1.073L1.254 14.746 4.358 4.4A1.5 1.5 0 0 1 5.43 3.377l3.313-.828zm-1.8 2.908-3.173.793a.5.5 0 0 0-.358.342l-2.57 8.565 8.567-2.57a.5.5 0 0 0 .34-.357l.794-3.174-3.6-3.6z"/>
+                                                <path fill-rule="evenodd" d="M2.832 13.228 8 9a1 1 0 1 0-1-1l-4.228 5.168-.026.086z"/>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                    <div id="directorSignatureArea" style="display: none; margin-top: 20px;">
+                                        <p>Veuillez signer dans le cadre ci-dessous :</p>
+                                        <canvas id="directorCanvas" width="275%" height="200%" style="border:1px solid #000; background: white;"></canvas>
+                                        <div style="margin-top: 10px;" class="areaBtnsSignature">
+                                            <button onclick="clearSignature('director')" class="cleanSignature" title="Effacer"><ion-icon name="refresh-outline"></ion-icon></button>
+                                            <button onclick="submitSignature('director')" class="saveSignature" title="Enregistrer la signature"><ion-icon name="checkmark-done-outline"></ion-icon></button>
+                                            <button onclick="deactivateSignature('director')" class="cancelSignature" title="Annuler"><ion-icon name="stop-outline"></ion-icon></button>
+                                        </div>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        {% endif %}
+                    <hr id="hrShow2">
+                        {# société #}
+                        {% if formulaire.societySignature %}
+                            <p class="signetureSociety">Signature déjà enregistrée ✔️</p>
+                        {% else %}
+                            {# ПРОВЕРЯЕМ, ЧТО ТОКЕН СУЩЕСТВУЕТ #}
+                            {% if formulaire.societySignToken %}
+                                <h3>Signature de la société:</h3>
+                                <p>Lien unique à envoyer au représentant de l'entreprise pour signature :</p>
+                                <div style="display: flex; align-items: center; justify-content: center; gap: 10px;">
+                                    <input type="text" id="signatureLink" value="{{ url('app_formulaire_society_sign', { token: formulaire.societySignToken }) }}" readonly style="width: 400px; padding: 5px;">
+                                    {{ include('components/copy_button.html.twig') }}
+                                </div>
+                                <small>Ce lien est unique et permet de signer le document.</small>
+                            {# {% else %}
+                                <p style="color: #999; font-style: italic;">
+                                    Le token de signature pour la société n'a pas été généré. Veuillez éditer et sauvegarder le formulaire pour le générer.
+                                </p> #}
+                            {% endif %}
+                        {% endif %}
+                    </div>
+                </div>
+            </section>
+            <hr>
+            <div id="buttonsArea">
+                {{ include('components/pdf_button.html.twig') }}
+                {% if 'ROLE_COMMANDANT' not in app.user.roles %}
+                    {{ include('components/edit_button.html.twig') }}
+                    {{ include('components/_delete_form.html.twig') }}
+                {% endif %}
+            </div>
+        </section>
+    </main>
+<script>
+    function copyLink() {
+        const copyText = document.getElementById("signatureLink");
+        copyText.select();
+        copyText.setSelectionRange(0, 99999); // For mobile devices
+        navigator.clipboard.writeText(copyText.value);
+        alert("Lien copié: " + copyText.value);
+    }
+</script>
+<script>
+// Глобальные переменные для управления состоянием подписей
+const signatureStates = {
+    student: { active: false, canvas: null, ctx: null, isDrawing: false, lastX: 0, lastY: 0 },
+    commandant: { active: false, canvas: null, ctx: null, isDrawing: false, lastX: 0, lastY: 0 },
+    director: { active: false, canvas: null, ctx: null, isDrawing: false, lastX: 0, lastY: 0 }
+};
+
+// Активация поля подписи
+function activateSignature(role) {
+    console.log('Activating signature for:', role);
+    
+    // Скрываем кнопку активации
+    document.getElementById('activate' + capitalizeFirstLetter(role) + 'Signature').style.display = 'none';
+    
+    // Показываем область подписи
+    document.getElementById(role + 'SignatureArea').style.display = 'block';
+    
+    // ИНИЦИАЛИЗИРУЕМ И НАСТРАИВАЕМ CANVAS В МОМЕНТ АКТИВАЦИИ
+    initializeCanvas(role);
+    
+    // Активируем события для canvas
+    setupCanvasEvents(role);
+    
+    signatureStates[role].active = true;
+}
+
+// Инициализация конкретного canvas
+function initializeCanvas(role) {
+    const canvas = document.getElementById(role + 'Canvas');
+    if (canvas) {
+        signatureStates[role].canvas = canvas;
+        signatureStates[role].ctx = canvas.getContext('2d');
+        
+        // Настройки кисти
+        signatureStates[role].ctx.lineWidth = 2;
+        signatureStates[role].ctx.lineCap = 'round';
+        signatureStates[role].ctx.lineJoin = 'round';
+        signatureStates[role].ctx.strokeStyle = '#000000';
+        
+        // Очищаем canvas
+        signatureStates[role].ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        console.log('Canvas initialized for:', role);
+    } else {
+        console.error('Canvas not found for:', role);
+    }
+}
+
+// Деактивация поля подписи
+function deactivateSignature(role) {
+    // Показываем кнопку активации
+    document.getElementById('activate' + capitalizeFirstLetter(role) + 'Signature').style.display = 'block';
+    
+    // Скрываем область подписи
+    document.getElementById(role + 'SignatureArea').style.display = 'none';
+    
+    // Удаляем события canvas чтобы избежать утечек памяти
+    removeCanvasEvents(role);
+    
+    signatureStates[role].active = false;
+}
+
+// Настройка событий для canvas
+function setupCanvasEvents(role) {
+    const canvas = signatureStates[role].canvas;
+    
+    if (!canvas) {
+        console.error('Canvas not available for events:', role);
+        return;
+    }
+    
+    console.log('Setting up events for:', role);
+    
+    // События для мыши
+    canvas.addEventListener('mousedown', (e) => startDrawing(role, e));
+    canvas.addEventListener('mousemove', (e) => draw(role, e));
+    canvas.addEventListener('mouseup', () => stopDrawing(role));
+    canvas.addEventListener('mouseout', () => stopDrawing(role));
+    
+    // События для touch устройств - ИСПРАВЛЕННАЯ ВЕРСИЯ
+    canvas.addEventListener('touchstart', (e) => {
+        e.preventDefault(); // Предотвращаем скроллинг страницы
+        handleTouchStart(role, e);
+    }, { passive: false });
+    
+    canvas.addEventListener('touchmove', (e) => {
+        e.preventDefault(); // Предотвращаем скроллинг страницы
+        handleTouchMove(role, e);
+    }, { passive: false });
+    
+    canvas.addEventListener('touchend', (e) => {
+        e.preventDefault();
+        stopDrawing(role);
+    });
+    
+    canvas.addEventListener('touchcancel', (e) => {
+        e.preventDefault();
+        stopDrawing(role);
+    });
+}
+
+// Удаление событий canvas (для очистки)
+function removeCanvasEvents(role) {
+    const canvas = signatureStates[role].canvas;
+    if (!canvas) return;
+    
+    // Клонируем элемент и заменяем его чтобы удалить все события
+    const newCanvas = canvas.cloneNode(true);
+    canvas.parentNode.replaceChild(newCanvas, canvas);
+    
+    // Обновляем ссылку на canvas
+    signatureStates[role].canvas = newCanvas;
+    signatureStates[role].ctx = newCanvas.getContext('2d');
+    
+    // Настраиваем контекст заново
+    signatureStates[role].ctx.lineWidth = 2;
+    signatureStates[role].ctx.lineCap = 'round';
+    signatureStates[role].ctx.lineJoin = 'round';
+    signatureStates[role].ctx.strokeStyle = '#000000';
+    
+    signatureStates[role].isDrawing = false;
+}
+
+// Функции для рисования
+function startDrawing(role, e) {
+    const state = signatureStates[role];
+    if (!state.active) return;
+    
+    state.isDrawing = true;
+    
+    const coords = getCoordinates(role, e);
+    state.lastX = coords.x;
+    state.lastY = coords.y;
+    
+    // Начинаем новый путь
+    state.ctx.beginPath();
+    state.ctx.moveTo(state.lastX, state.lastY);
+    
+    e.preventDefault();
+}
+
+function draw(role, e) {
+    const state = signatureStates[role];
+    if (!state.isDrawing || !state.active) return;
+    
+    const coords = getCoordinates(role, e);
+    
+    // Рисуем линию
+    state.ctx.lineTo(coords.x, coords.y);
+    state.ctx.stroke();
+    
+    state.lastX = coords.x;
+    state.lastY = coords.y;
+    
+    e.preventDefault();
+}
+
+function stopDrawing(role) {
+    signatureStates[role].isDrawing = false;
+}
+
+// ИСПРАВЛЕННАЯ обработка touch событий
+function handleTouchStart(role, e) {
+    if (e.touches.length === 1) {
+        const rect = signatureStates[role].canvas.getBoundingClientRect();
+        const touch = e.touches[0];
+        
+        // Проверяем, что касание внутри canvas
+        if (touch.clientX >= rect.left && touch.clientX <= rect.right &&
+            touch.clientY >= rect.top && touch.clientY <= rect.bottom) {
+            
+            const fakeEvent = {
+                type: 'mousedown',
+                offsetX: touch.clientX - rect.left,
+                offsetY: touch.clientY - rect.top,
+                preventDefault: () => e.preventDefault()
+            };
+            
+            startDrawing(role, fakeEvent);
+        }
+    }
+}
+
+function handleTouchMove(role, e) {
+    if (e.touches.length === 1 && signatureStates[role].isDrawing) {
+        const rect = signatureStates[role].canvas.getBoundingClientRect();
+        const touch = e.touches[0];
+        
+        const fakeEvent = {
+            type: 'mousemove',
+            offsetX: touch.clientX - rect.left,
+            offsetY: touch.clientY - rect.top,
+            preventDefault: () => e.preventDefault()
+        };
+        
+        draw(role, fakeEvent);
+    }
+}
+
+// Получение координат - УЛУЧШЕННАЯ ВЕРСИЯ
+function getCoordinates(role, e) {
+    const canvas = signatureStates[role].canvas;
+    const rect = canvas.getBoundingClientRect();
+    
+    let x, y;
+    
+    if (e.type.includes('touch')) {
+        // Для touch событий используем clientX/clientY и rect
+        x = e.clientX - rect.left;
+        y = e.clientY - rect.top;
+    } else {
+        // Для mouse событий используем offsetX/offsetY
+        x = e.offsetX || (e.clientX - rect.left);
+        y = e.offsetY || (e.clientY - rect.top);
+    }
+    
+    // Масштабирование для высокопиксельных экранов
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
+    
+    return {
+        x: Math.max(0, Math.min(x * scaleX, canvas.width)),
+        y: Math.max(0, Math.min(y * scaleY, canvas.height))
+    };
+}
+
+// Очистка подписи
+function clearSignature(role) {
+    const canvas = signatureStates[role].canvas;
+    const ctx = signatureStates[role].ctx;
+    
+    if (canvas && ctx) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+}
+
+// Отправка подписи на сервер
+function submitSignature(role) {
+    console.log('Trying to submit signature for:', role);
+    
+    const canvas = signatureStates[role].canvas;
+    if (!canvas) {
+        alert("Canvas introuvable pour le rôle: " + role);
+        return;
+    }
+
+    // Проверка, что пользователь что-то нарисовал
+    const ctx = signatureStates[role].ctx;
+    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    let isEmpty = true;
+    
+    for (let i = 0; i < imageData.data.length; i += 4) {
+        if (imageData.data[i + 3] !== 0) {
+            isEmpty = false;
+            break;
+        }
+    }
+    
+    if (isEmpty) {
+        alert("Veuillez fournir une signature avant d'enregistrer.");
+        return;
+    }
+
+    const dataURL = canvas.toDataURL();
+    console.log('Signature data URL length:', dataURL.length);
+
+    fetch('{{ path('formulaire_sign', { id: formulaire.id }) }}', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'X-Requested-With': 'XMLHttpRequest'
+        },
+        body: new URLSearchParams({
+            role: role,
+            signature: dataURL
+        })
+    })
+    .then(response => {
+        if (response.ok) {
+            return response.text();
+        }
+        throw new Error('Network response was not ok.');
+    })
+    .then(data => {
+        alert('Signature enregistrée avec succès.');
+        location.reload();
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Erreur lors de l\'enregistrement de la signature.');
+    });
+}
+
+// Вспомогательная функция для капитализации первой буквы
+function capitalizeFirstLetter(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+}
+
+// Функция для копирования ссылки
+function copyLink() {
+    const copyText = document.getElementById("signatureLink");
+    copyText.select();
+    copyText.setSelectionRange(0, 99999);
+    navigator.clipboard.writeText(copyText.value)
+        .then(() => {
+            alert("Lien copié: " + copyText.value);
+        })
+        .catch(err => {
+            console.error('Erreur lors de la copie:', err);
+            alert("Erreur lors de la copie du lien");
+        });
+}
+
+// ДОБАВЛЕНО: Предотвращение скроллинга страницы при рисовании на мобильных устройствах
+document.addEventListener('touchmove', function(e) {
+    // Если рисуем на каком-либо canvas, предотвращаем скроллинг страницы
+    for (const role in signatureStates) {
+        if (signatureStates[role].isDrawing) {
+            e.preventDefault();
+            break;
+        }
+    }
+}, { passive: false });
+
+// ДЕБАГ: Проверка что все элементы существуют
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('DOM loaded, checking signature elements...');
+    
+    const roles = ['student', 'commandant', 'director'];
+    roles.forEach(role => {
+        const btn = document.getElementById('activate' + capitalizeFirstLetter(role) + 'Signature');
+        const area = document.getElementById(role + 'SignatureArea');
+        const canvas = document.getElementById(role + 'Canvas');
+        
+        console.log(`${role} - Button:`, !!btn, 'Area:', !!area, 'Canvas:', !!canvas);
+    });
+});
+</script>
+
+{% endblock %}
