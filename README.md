@@ -1,5 +1,6 @@
-====================================== EXPLICATION ========================================
+=============================== EXPLICATION =================================
 
+## How to use this project
 📄 Project Purpose
 The goal of this project is to enable four parties to sign an agreement online.
 1) The document in question is a convention required for completing an internship during a student’s training. The student (intern) independently finds a real company willing to host them for the internship.
@@ -45,8 +46,7 @@ Password: pass;
 
 
 
-
-====================================== INSTALATION ========================================
+=============================== INSTALATION =================================
 
 ## How to start this project
 1.	Clone the repository	git clone https://github.com/77rolex/AFPA-sign-documents-online.git
